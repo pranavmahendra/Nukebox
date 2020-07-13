@@ -2,17 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Square_Controller : MonoBehaviour
+public class Square_Controller
 {
-    // Start is called before the first frame update
-    void Start()
+    public Square_Controller(Square_Model square_Model, Square_View square_View)
     {
-        
+        Square_Model = square_Model;
+        Square_View = square_View;
+
+        square_View.initialize(this);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    public Square_Model Square_Model { get; }
+    public Square_View Square_View { get; }
 }

@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class Square_Model
 {
-   public Square_Model(int id, Color color)
+   public Square_Model(ButtoScriptable buttonScriptable)
    {
-        Id = id;
-        Color = color;
+        Id = buttonScriptable.id;
+        Color = buttonScriptable.Color;
     }
 
     public int Id { get; }

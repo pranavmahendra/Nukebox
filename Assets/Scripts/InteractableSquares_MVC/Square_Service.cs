@@ -2,15 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Square_Service : MonoBehaviour
+public class Square_Service : MonosingletonGeneric<Square_Service>
 {
-    // Start is called before the first frame update
+    private Square_Model Square_Model;
+    private Square_Controller Controller;
+
+
     void Start()
     {
         
     }
 
-    // Update is called once per frame
+
     void Update()
     {
         
