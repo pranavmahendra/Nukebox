@@ -9,17 +9,27 @@ public class LevelLoader : MonoBehaviour
 {
     public GameObject startPanel;
     public GameObject levelButtonPanels;
+    public GameObject rulesPanels;
+
 
     public Button startButton;
     public Button backButton;
+    public Button loadHelp;
+    public Button closeHelp;
+  
     public List<Button> levelButtons;
     [SerializeField]private TextMeshProUGUI levelText;
 
     private bool Page1Inactive = false; 
     private  bool Page2Inactive = true;
+    private bool rulesLoad = false;
 
     private int levelCount = 1;
     
+    private void Awake()
+    {
+        rulesPanels.gameObject.SetActive(false);
+    }
 
     void Start()
     {
@@ -27,6 +37,9 @@ public class LevelLoader : MonoBehaviour
 
         startButton.onClick.AddListener(StartBackFunctionality);
         backButton.onClick.AddListener(StartBackFunctionality);
+
+        loadHelp.onClick.AddListener(LoadHowToPlay);
+        closeHelp.onClick.AddListener(LoadHowToPlay);
     }
 
     private void LevelNaming()
@@ -62,6 +75,20 @@ public class LevelLoader : MonoBehaviour
     public void LoadLevel(int index)
     {
         SceneManager.LoadScene(index);
+    }
+
+    private void LoadHowToPlay()
+    {
+        if(!rulesLoad)
+        {
+            rulesPanels.gameObject.SetActive(true);
+            rulesLoad = !rulesLoad;
+        }
+        else if(rulesLoad)
+        {
+            rulesPanels.gameObject.SetActive(false);
+            rulesLoad = !rulesLoad;
+        } 
     }
 
 

@@ -22,7 +22,7 @@ public class Square_View : MonoBehaviour
     [HideInInspector] public Image imageComponent;
 
     public bool isHead;   //Whether this is head or not.
-    private static bool firstHeadFound;
+    private  bool firstHeadFound = false;
 
     //event actions
     public UnityEvent flowCompleted;
@@ -88,7 +88,7 @@ public class Square_View : MonoBehaviour
                     matchFoundlist.Add(this);
                     Debug.Log("Total count of the list is: " + matchFoundlist.Count);
                 }
-                else if (isHead && firstHeadFound) 
+                else if (isHead && !firstHeadFound) //Other head will always have this value as false by default.
                 {
                     Debug.Log("This line is completed.");
 
@@ -100,15 +100,8 @@ public class Square_View : MonoBehaviour
                     PlayerPrefs.DeleteKey("ID");
                     //This will invoke a method for achievement system.
                     matchFoundlist.Clear();
-                    firstHeadFound = false;
+                    Debug.Log("Setting firsthead to: " + firstHeadFound);
                 }
-                else  
-                {
-
-                    Debug.Log("Running this script???");
-                }
-                
-
             }
             else   //Case2 - If ID of next box does not match.
             {
@@ -118,17 +111,19 @@ public class Square_View : MonoBehaviour
 
                     PlayerPrefs.SetInt("ID", ID);  
                     savingColor(imageComponent.color);
+
                 }
                 else
                 {
 
-
                     PlayerPrefs.DeleteKey("ID");
+
+                    PlayerPrefs.SetString("Failed","true");
                  
                     resetColors();
                     matchFoundlist.Clear();
 
-                    
+                    Debug.Log("Deleting Key");
                     Debug.Log("Clearing list. Count is: " + matchFoundlist.Count);
                 }
 
@@ -138,10 +133,13 @@ public class Square_View : MonoBehaviour
         }
         else   //if ID is not found
         {
-            if (isHead)
+            Debug.Log("This should run!!");
+            if (isHead && !firstHeadFound)
             {
-                firstHeadFound = true;
-                
+                firstHeadFound = true; //bool is getting true.
+
+                Debug.Log("Status if first head is:" + firstHeadFound);
+
                 PlayerPrefs.SetInt("ID", ID); //if no id is available then this will be called.
 
                 //PlayerPrefs.SetString("Color", TextColor.ToString());
@@ -150,11 +148,18 @@ public class Square_View : MonoBehaviour
 
                 Debug.Log("Saving ID" + ID + ". Color saved is: " + imageColor.ToString());
             }
-            else
+            else if (isHead && firstHeadFound)
             {
-                Debug.Log("You did not click on head");
+            
+               if (PlayerPrefs.HasKey("Failed"))
+                {
+                    PlayerPrefs.SetInt("ID", ID);
+                    savingColor(imageComponent.color);
+                    PlayerPrefs.DeleteKey("Failed");
+                }
+                
             }
-
+         
         }
     }
 
@@ -186,16 +191,3 @@ public class Square_View : MonoBehaviour
 
 }
 
-
-//Points in mind
-//Jaha touch karega woh starting point.
-//Uske aage woh ya toh upar jayega ya right. only 4 movements.
-//2 conditions hongi. Aagar match hogya then continue, warna break.
-//Condition check kaise hogi: array ke numbers ko id ki tarah use karke. 
-//id match karayenge.
-//Playerprefs ke through agar id save karle starting point ki. agar next box mein event
-//call hoga compare() karne ka. Agar id match kar gayi then continue otherwise
-//PLayerprefs se woh id clear hojayegi dubara start karna
-
-//Add the matched colors in the list.
-//Reset colors back to grey when condition false and remove everything from list.
