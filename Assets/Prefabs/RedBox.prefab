@@ -60,7 +60,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.8490566, g: 0.5807227, b: 0.5807227, a: 1}
+  m_Color: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   m_RaycastTarget: 1
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -136,3 +136,9 @@ MonoBehaviour:
   buttonComponent: {fileID: 0}
   imageComponent: {fileID: 0}
   isHead: 1
+  flowCompleted:
+    m_PersistentCalls:
+      m_Calls: []
+  moveCompleted:
+    m_PersistentCalls:
+      m_Calls: []
