@@ -34,25 +34,14 @@ public class Square_View : MonoBehaviour
     public static List<Square_View> matchFoundlist = new List<Square_View>(); //This is where the matching box colors will be stored.
     //Deleted after completion.
 
-
-    private void Awake()
-    {
-        PlayerPrefs.DeleteAll(); //Will clear if any ID is available.
-    }
-
     void Start()
     {
+        PlayerPrefs.DeleteAll(); //Will clear if any ID is available.
         //buttonText = GetComponentInChildren<Text>();
 
         imageComponent = GetComponent<Image>();
         //imageColor = imageComponent.color;  //First getting set as per inspector.
 
-        //if (isHead != true)  //For buttons which are not head. Color is set to grey.
-        //{
-        //    //buttonText.color = Color.white;
-        //    //buttonText.fontSize = 20;
-
-        //}
         imageComponent.color = Color.gray;  //Gray color being assigned.
 
         buttonComponent = GetComponent<Button>();
@@ -101,25 +90,23 @@ public class Square_View : MonoBehaviour
                     imageColor = setColor;
                     imageComponent.color = imageColor; //Applying the saved value in playerprefs to the image color.
 
+                    AddTo_Disable();
                     
-                    matchFoundlist.Add(this);
                     //Debug.Log("Total count of the list is: " + matchFoundlist.Count);
                 }
                 else if (isHead && firstHeadFound) //This means line is completed.
                 {
                     firstHeadFound = false;
                     Debug.Log("This line is completed.");
-
+                    matchFoundlist.Add(this);
                     //inProgress = false;
-
-                    flowCompleted.Invoke();  //Event invoked means line has been completed.
-                    moveCompleted.Invoke();
 
                     //PlayerPrefs.DeleteAll();
                     PlayerPrefs.DeleteKey("ID");
 
                     //This will invoke a method for achievement system.
-                    DisableList();
+                    Invoke("WinSystem", 0.2f);
+
                     //Debug.Log("Setting firsthead to: " + firstHeadFound);
                 }
 
@@ -129,6 +116,8 @@ public class Square_View : MonoBehaviour
                 if (isHead)
                 {
                     firstHeadFound = true;    //Both selected are heads so no need to chnge the status of head.
+                    
+
                     moveCompleted.Invoke();
                     //inProgress = false;
                     PlayerPrefs.SetInt("ID", ID);
@@ -136,8 +125,9 @@ public class Square_View : MonoBehaviour
 
                     //Reseting previous list.
                     resetColors();
-                    matchFoundlist.Clear();
 
+                    Invoke("AddTo_Disable", 0.1f);
+      
                 }
                 else  //Clear everything
                 {
@@ -147,7 +137,6 @@ public class Square_View : MonoBehaviour
                     //PlayerPrefs.SetString("Failed","true");
 
                     resetColors();
-                    matchFoundlist.Clear();
 
                     //Debug Log("Deleting Key");
                     //Debug.Log("Clearing list. Count is: " + matchFoundlist.Count);
@@ -165,6 +154,8 @@ public class Square_View : MonoBehaviour
                 firstHeadFound = true; //bool is getting true.
                 matchFoundlist.Add(this);
 
+                //imageComponent.raycastTarget = !firstHeadFound;
+                //Debug.Log("Settings raycast target to: " + !firstHeadFound);
 
                 PlayerPrefs.SetInt("ID", ID); //if no id is available then this will be called.
 
@@ -174,20 +165,6 @@ public class Square_View : MonoBehaviour
 
                 Debug.Log("Saving ID: " + ID + ". Color saved is: " + imageColor.ToString());
             }
-            //else if (isHead && firstHeadFound)
-            //{
-
-            //   if (PlayerPrefs.HasKey("Failed"))
-            //    {
-            //        firstHeadFound = true;
-
-            //        PlayerPrefs.SetInt("ID", ID);
-            //        savingColor(imageComponent.color);
-            //        PlayerPrefs.DeleteKey("Failed");
-            //    }
-
-            //}
-
         }
     }
 
@@ -209,23 +186,69 @@ public class Square_View : MonoBehaviour
     {
 
         moveCompleted.Invoke();
-        Debug.Log("Match not found. Reseting the colors");
+        //Debug.Log("Match not found. Reseting the colors");
         for (int i = 0; i < matchFoundlist.Count; i++)
         {
             matchFoundlist[i].imageComponent.color = Color.gray;
+        }
+        EnableObjects();
 
+    }
+
+
+
+    //Disable list as soon as move is completed. List will be cleared in the end as well.
+    private void WinSystem()
+    {
+        int i = matchFoundlist.Count; //5
+
+        Debug.Log("Count is: " + i);
+        //If previous waale matchfound mein isHead off hai. then only this win condition.
+        if (matchFoundlist[i - 2].isHead == false)  //4
+        {
+            for (int j = 0; j < i; j++)
+            {
+                matchFoundlist[j].imageComponent.raycastTarget = false;
+            }
+            flowCompleted.Invoke();  //Event invoked means line has been completed.
+            moveCompleted.Invoke();
+            //Debug.Log("You have won");
+        }
+
+        else if (matchFoundlist[i-2].isHead) //In case we click directly on the next head.
+        {
+            Debug.Log("This will be fucking called");
+            for (int k = 0; k < i; k++)
+            {
+                matchFoundlist[k].imageComponent.raycastTarget = true;
+                matchFoundlist[k].imageComponent.color = Color.gray;
+            }
+            moveCompleted.Invoke();
+        }
+
+        matchFoundlist.Clear();
+        
+    }
+
+
+    //Add and Disable objects
+    private void AddTo_Disable()
+    {
+        //Debug.Log("Adding to disable list");
+        matchFoundlist.Add(this);
+        for (int i = 0; i < matchFoundlist.Count; i++)
+        {
+            matchFoundlist[i].imageComponent.raycastTarget = false;
         }
     }
 
-    //Disable list as soon as move is completed.
-    private void DisableList()
+
+    //Enable again if line not completed.
+    private void EnableObjects()
     {
-        matchFoundlist.Add(this);
-        //Debug.Log("Clearing list. Count is: " + matchFoundlist.Count);
-        for (int i = 0; i < matchFoundlist.Count ; i++)
+        for (int i = 0; i < matchFoundlist.Count; i++)
         {
-            matchFoundlist[i].imageComponent.raycastTarget = false;
-            //Debug.Log("Disabling");
+            matchFoundlist[i].imageComponent.raycastTarget = true;
         }
         matchFoundlist.Clear();
     }
