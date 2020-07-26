@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1180331388708621179}
   - component: {fileID: 1180331388708621180}
   - component: {fileID: 1180331388708621177}
+  - component: {fileID: -7282303107617307438}
   m_Layer: 5
   m_Name: BlueBox
   m_TagString: Untagged
@@ -154,3 +155,16 @@ MonoBehaviour:
   moveCompleted:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &-7282303107617307438
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1180331388708621182}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates: []

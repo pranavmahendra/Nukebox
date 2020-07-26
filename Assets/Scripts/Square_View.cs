@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 
 //red = 1
 //green = 2
@@ -23,12 +24,14 @@ public class Square_View : MonoBehaviour
 
     public bool isHead;   //Whether this is head or not.
     private static bool firstHeadFound;
+    bool hasBeenVisited = false;
     //private static bool inProgress = false; //Static variable
 
     //event actions
     public UnityEvent flowCompleted;
     public UnityEvent moveCompleted;
 
+    EventTrigger myeventTrigger;
 
     [HideInInspector]
     public static List<Square_View> matchFoundlist = new List<Square_View>(); //This is where the matching box colors will be stored.
@@ -45,13 +48,23 @@ public class Square_View : MonoBehaviour
         imageComponent.color = Color.gray;  //Gray color being assigned.
 
         buttonComponent = GetComponent<Button>();
+        ButtonClicks();
+
+        myeventTrigger = GetComponent<EventTrigger>();
+        
+    }
+
+    public void ButtonClicks()
+    {
         buttonComponent.onClick.AddListener(GetSavedIDValue);
         buttonComponent.onClick.AddListener(ChnageColorHead);
     }
 
     private void Update()
     {
-        Debug.Log("Status of first head is:" + firstHeadFound);
+        //eventManager();
+        //Debug.Log("New Count is: " + matchFoundlist.Count);
+        //Debug.Log("Status of first head is:" + firstHeadFound);
     }
 
     //Changing the color of button when pressed as per the defined image color in inspector.
@@ -66,11 +79,12 @@ public class Square_View : MonoBehaviour
 
     public void GetSavedIDValue()
     {
-        //Debug.Log("Status of first head is:" + firstHeadFound);
+        Debug.Log("Status of first head is:" + firstHeadFound);
 
         int x = 0;
         Color setColor;
 
+        hasBeenVisited = true;
 
         if (PlayerPrefs.HasKey("ID")) //if id is found 2 conditions will be checked.
         {
@@ -105,8 +119,8 @@ public class Square_View : MonoBehaviour
                     PlayerPrefs.DeleteKey("ID");
 
                     //This will invoke a method for achievement system.
-                    Invoke("WinSystem", 0.2f);
-
+                    Invoke("WinSystem", 0.1f);
+         
                     //Debug.Log("Setting firsthead to: " + firstHeadFound);
                 }
 
@@ -217,7 +231,7 @@ public class Square_View : MonoBehaviour
 
         else if (matchFoundlist[i-2].isHead) //In case we click directly on the next head.
         {
-            Debug.Log("This will be fucking called");
+          
             for (int k = 0; k < i; k++)
             {
                 matchFoundlist[k].imageComponent.raycastTarget = true;
@@ -252,6 +266,35 @@ public class Square_View : MonoBehaviour
         }
         matchFoundlist.Clear();
     }
+
+
+    //Drag Events.
+    void eventManager()
+    { 
+        if (matchFoundlist.Count == 0 && !firstHeadFound)
+        {
+            myeventTrigger.AddListener(EventTriggerType.PointerDown, onPointerEnter);
+        }
+        else if(matchFoundlist.Count > 0)
+        {
+            myeventTrigger.AddListener(EventTriggerType.PointerEnter, onPointerEnter); 
+        }
+    }
+
+
+
+
+    //OnPointer events
+    void onPointerEnter(PointerEventData eventData)
+    {
+        if (!hasBeenVisited)
+        {
+            ChnageColorHead();
+            GetSavedIDValue();
+        }
+  
+    }
+
 
 }
 
